@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle financeiro</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+    <h2>Controle financeiro</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Tipo</th>
+                <th>Valor (R$)</th>
+            </tr>
+        </thead>
+
+        <tbody id="tabela"></tbody>
+            <tr>
+                <td><input type="date"></td>
+                <td><input type="text"></td>
+                <td>
+                    <select>
+                        <option value="entrada">Entrada</option>
+                        <option value="saida">Saída</option>
+                    </select>
+                </td>
+
+                <td><input type="number" step="0.01"></td>
+            </tr>
+    </table>
+    <button id="btnAdd" type="button">Adicionar linha</button>
+    <h3>Total: R$ <span id="total">0.00</span></h3>
+
+<script src="script.js"></script>
+</body>
+</html>
