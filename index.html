@@ -10,11 +10,13 @@
 <body>
 
     <h2>Controle financeiro</h2>
+    
+    <h3><input type="text" placeholder="Data"></h3>
 
     <table>
+        
         <thead>
             <tr>
-                <th>Data</th>
                 <th>Descrição</th>
                 <th>Tipo</th>
                 <th>Valor (R$)</th>
@@ -23,7 +25,6 @@
 
         <tbody id="tabela"></tbody>
             <tr>
-                <td><input type="date"></td>
                 <td><input type="text"></td>
                 <td>
                     <select>
@@ -36,7 +37,7 @@
             </tr>
     </table>
     <button id="btnAdd" type="button">Adicionar linha</button>
-    <h3>Total: R$ <span id="total">0.00</span></h3>
+    <h4>Total: R$ <span id="total">0.00</span></h4>
 
 <script src="script.js"></script>
 </body>

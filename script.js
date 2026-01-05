@@ -7,7 +7,6 @@ function adicionarLinha() {
     const linha = document.createElement('tr');
 
     linha.innerHTML = `
-        <td><input type="date" class="data"></td>
         <td><input type="text" class="descricao"></td>
         <td>
             <select class="tipo">
@@ -47,7 +46,6 @@ function salvarDados() {
     const dados = [];
     document.querySelectorAll('#tabela tbody tr').forEach(linha => {
         dados.push({
-            data: linha.querySelector('input[type="date"]').value,
             descricao: linha.querySelector('input[type="text"]').value,
             tipo: linha.querySelector('select').value,
             valor: linha.querySelector('input[type="number"]').value 
@@ -61,7 +59,6 @@ function carregarDados() {
     dados.forEach(item => {
         const linha = document.createElement('tr');
         linha.innerHTML = `
-            <td><input type="date" value="${item.data}"></td>
             <td><input type="text" value="${item.descricao}"></td>
             <td>
             <select>
