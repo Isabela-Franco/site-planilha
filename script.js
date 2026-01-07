@@ -16,9 +16,8 @@ function adicionarLinha() {
 
   const tr = document.createElement("tr");
   tr.innerHTML = `
-    <td>
-      <input type="text" name="descricao" placeholder="Descrição">
-    </td>
+    <td><input type="text" name="data" placeholder="DD/MM/AAAA"></td>
+    <td><input type="text" name="descricao" placeholder="Descrição"></td>
     <td>
       <select name="tipo" onchange="calcularTotal()">
         <option value="entrada">Entrada</option>
@@ -28,6 +27,7 @@ function adicionarLinha() {
     <td>
       <input type="number" name="valor" step="0.01" placeholder="0.00" oninput="calcularTotal()">
     </td>
+    
   `;
   tabela.appendChild(tr);
 }
@@ -55,6 +55,14 @@ function calcularTotal() {
   });
 
   totalSpan.innerText = total.toFixed(2);
+  totalSpan.classList.remove("positivo", "negativo", "zero");
+  if (total > 0) {
+  totalSpan.classList.add("positivo");
+  } else if (total < 0) {
+    totalSpan.classList.add("negativo");
+  }else {
+    totalSpan.classList.add("zero");
+  }
 }
 
 
@@ -67,10 +75,11 @@ function salvarPlanilha() {
   const dados = [];
 
   linhas.forEach(tr => {
+    const data = tr.querySelector('input[name="data"]')?.value;
     const descricao = tr.querySelector('input[name="descricao"]')?.value;
     const tipo = tr.querySelector('select[name="tipo"]')?.value.trim().toLowerCase();
     const valor = tr.querySelector('input[name="valor"]')?.value;
-    if (descricao && tipo && valor) dados.push({ descricao, tipo, valor });
+    if (data && descricao && tipo && valor) dados.push({data, descricao, tipo, valor });
   });
 
   if (dados.length === 0) {
@@ -86,6 +95,10 @@ function salvarPlanilha() {
   }
   const chave = "planilha-" + nome;
   localStorage.setItem(chave, JSON.stringify(dados));
+  planilhaAtual = chave; // atualiza a planilha atua
+  
+  const anotacao = document.getElementById("anotacao").value.trim();
+  localStorage.setItem(chave, JSON.stringify({ dados, anotacao }));
   planilhaAtual = chave; // atualiza a planilha atual
 
   carregarDias();
@@ -116,27 +129,33 @@ function carregarDias() {
 // FUNÇÃO: Carregar Planilha de um Dia
 function carregarPlanilha(chave) {
   planilhaAtual = chave; // guarda a planilha atual
+  const nome = chave.replace("planilha-", "");
+  document.getElementById("nome-planilha").value = nome;
   const tabela = document.getElementById("tabela-hoje");
   if (!tabela) return;
 
   tabela.innerHTML = "";
-  const dados = JSON.parse(localStorage.getItem(chave));
+  const planilha = JSON.parse(localStorage.getItem(chave));
+  const dados = planilha.dados;
+  const anotacao = planilha.anotacao || "";
+  const texarea = document.getElementById("anotacao");
+  if (texarea) texarea.value = anotacao;
 
   dados.forEach(item => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>
-        <input type="text" name="descricao" value="${item.descricao}">
-      </td>
+      <td><input type="text" name="data" value="${item.data}"></td>
+      <td><input type="text" name="descricao" value="${item.descricao}"></td>
       <td>
         <select name="tipo" onchange="calcularTotal()">
-          <option value="entrada" ${item.tipo === "entrada" ? "selected" : ""}>Entrada</option>
-          <option value="saida" ${item.tipo === "saida" ? "selected" : ""}>Saída</option>
+          <option value="entrada" ${item.tipo === "entrada" ? "selected" : ""}>Recebeu</option>
+          <option value="saida" ${item.tipo === "saida" ? "selected" : ""}>Pagou</option>
         </select>
       </td>
       <td>
         <input type="number" name="valor" value="${item.valor}" step="0.01" oninput="calcularTotal()">
       </td>
+      
     `;
     tabela.appendChild(tr);
   });
@@ -159,6 +178,7 @@ function excluirPlanilha() {
   const tabela = document.getElementById("tabela-hoje");
   tabela.innerHTML = "";
   document.getElementById("total").innerText = "0.00";
+
   carregarDias();
   alert("Planilha excluída com sucesso.");
 }
