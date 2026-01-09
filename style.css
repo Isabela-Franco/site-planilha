@@ -83,6 +83,12 @@ button{
 #btnExcluir{
     background: #dc3545;
 }
+.btn-excluir{
+    background: #dc3545;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
 
 /*TOTAL*/
 p{

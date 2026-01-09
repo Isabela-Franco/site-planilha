@@ -2,11 +2,13 @@
  // Define os botões e adiciona eventos
   const btnAdd = document.getElementById("btnAdd");
   const btnSalvar = document.getElementById("btnSalvar");
+  const btnAddObs = document.getElementById("btnAddObs")
 
 
 
   if (btnAdd) btnAdd.addEventListener("click", adicionarLinha);
   if (btnSalvar) btnSalvar.addEventListener("click", salvarPlanilha);
+  if(btnAddObs) btnAddObs.addEventListener("click", adicionarObservacao);
 
 
 // FUNÇÃO: Adicionar Linha
@@ -27,9 +29,20 @@ function adicionarLinha() {
     <td>
       <input type="number" name="valor" step="0.01" placeholder="0.00" oninput="calcularTotal()">
     </td>
+    <td><input type="button" onclick="excluirLinha(this)">Excluir</td>
     
   `;
   tabela.appendChild(tr);
+
+  const btnExcluir = document.createElement("button");
+  btnExcluir.textContent = "Excluir"
+  btnExcluir.textContent = "btn-excluir"
+  btnExcluir.onclick = () => {
+    tr.remove();
+    btnExcluir.remove();
+    calcularTotal();
+
+  };
 }
 
 
@@ -94,10 +107,13 @@ function salvarPlanilha() {
     return;
   }
   const chave = "planilha-" + nome;
-  localStorage.setItem(chave, JSON.stringify(dados));
   planilhaAtual = chave; // atualiza a planilha atua
   
-  const anotacao = document.getElementById("anotacao").value.trim();
+  const anotacao = [];
+  document.querySelectorAll("#lista-observacoes input").forEach(input =>{
+    if (input.value.trim())
+      anotacao.push(input.value.trim());
+  });
   localStorage.setItem(chave, JSON.stringify({ dados, anotacao }));
   planilhaAtual = chave; // atualiza a planilha atual
 
@@ -136,10 +152,12 @@ function carregarPlanilha(chave) {
 
   tabela.innerHTML = "";
   const planilha = JSON.parse(localStorage.getItem(chave));
+  const anotacao = planilha.anotacao || [];
   const dados = planilha.dados;
-  const anotacao = planilha.anotacao || "";
   const texarea = document.getElementById("anotacao");
   if (texarea) texarea.value = anotacao;
+  const listaObs = document.getElementById("lista-observacoes");
+  listaObs.innerHTML = "";
 
   dados.forEach(item => {
     const tr = document.createElement("tr");
@@ -157,6 +175,18 @@ function carregarPlanilha(chave) {
       </td>
       
     `;
+  
+ 
+
+  anotacao.forEach(texto => {
+  const div = document.createElement("div");
+  div.className = "obs-item";
+  div.innerHTML = `
+    <input type="text" value="${texto}"></input
+    `;
+  listaObs.appendChild(div);
+});
+
     tabela.appendChild(tr);
   });
 
@@ -178,9 +208,34 @@ function excluirPlanilha() {
   const tabela = document.getElementById("tabela-hoje");
   tabela.innerHTML = "";
   document.getElementById("total").innerText = "0.00";
+  document.getElementById("lista-observacoes").innerHTML = "";
 
   carregarDias();
   alert("Planilha excluída com sucesso.");
+}
+
+//EXCLUIR LINHA
+function excluirLinha(botao){
+    const tr = botao.closest("tr")
+    if (!tr) return;
+    tr.remove();
+    calcularTotal()
+
+}
+
+function adicionarObservacao() {
+  const lista = document.getElementById("lista-observacoes");
+  if (!lista) return;
+
+  const div = document.createElement("div");
+  div.className = "obs-item";
+
+  div.innerHTML = `
+    <input type="text" placeholder="Digite uma observação"></input
+    
+  `;
+
+  lista.appendChild(div);
 }
 
 
